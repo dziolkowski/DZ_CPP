@@ -1,0 +1,24 @@
+# Visual Studio / Rider files
+.vs/
+.idea/
+*.sln
+*.suo
+*.opensdf
+*.sdf
+
+# Unreal Engine generated folders
+Binaries/
+Build/
+DerivedDataCache/
+Intermediate/
+Saved/
+
+# Local configuration
+Saved/Config/Windows/
+
+# Plugins (opcjonalne - odkomentuj jeśli chcesz ignorować pluginy z Marketplace)
+# Plugins/
+
+# Mac / XCode files
+*.xcodeproj/
+*.xcworkspace/
