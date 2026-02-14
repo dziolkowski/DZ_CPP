@@ -5,6 +5,7 @@
 #include "DZ_CPPCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetSystemLibrary.h" 
+#include "CombatInterface.h"
 #include "Components/SceneComponent.h"
 
 AWeapon::AWeapon()
@@ -79,7 +80,17 @@ void AWeapon::OnBoxOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 
 	if (bSuccess && BoxHit.GetActor())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Trafiono: %s"), *BoxHit.GetActor()->GetName());
+		AActor* HitActor = BoxHit.GetActor();
+
+		// Sprawdzamy, czy trafiony obiekt implementuje interfejs walki
+		if (HitActor && HitActor->GetClass()->ImplementsInterface(UCombatInterface::StaticClass()))
+		{
+			// Wywolujemy funkcje z interfejsu
+			ICombatInterface::Execute_GetHit(HitActor, BoxHit.ImpactPoint);
+
+			// Dodajmy log dla pewnosci
+			UE_LOG(LogTemp, Warning, TEXT("Wywolano GetHit na: %s"), *HitActor->GetName());
+		}
 	}
 }
 
