@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "InteractionComponent.h"
+#include "AItem.h"
 #include "DZ_CPPCharacter.generated.h"
 
 class USpringArmComponent;
@@ -30,6 +32,10 @@ class ADZ_CPPCharacter : public ACharacter
 	/** Follow camera */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta = (AllowPrivateAccess = "true"))
 	UCameraComponent* FollowCamera;
+
+	/** Interaction Component */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
+	UInteractionComponent* InteractionComp;
 	
 protected:
 
@@ -49,15 +55,33 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Input")
 	UInputAction* MouseLookAction;
 
+	/** Interact Input Action */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* InteractAction;
+
+	/** Attack Input Action */
+	UPROPERTY(EditAnywhere, Category = "Input")
+	UInputAction* AttackAction;
+
 public:
 
 	/** Constructor */
 	ADZ_CPPCharacter();	
 
+	void Equip(AAItem* WeaponItem);
+
 protected:
 
 	/** Initialize input action bindings */
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	// Funkcje obslugi wejscia
+	void OnInteract();
+	void OnAttack();
+
+	// Zmienna przechowuj¹ca obecn¹ broñ
+	UPROPERTY(VisibleAnywhere, Category = "Combat")
+	AAItem* CurrentWeapon;
 
 protected:
 

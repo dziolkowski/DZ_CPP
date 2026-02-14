@@ -46,6 +46,8 @@ ADZ_CPPCharacter::ADZ_CPPCharacter()
 	FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName);
 	FollowCamera->bUsePawnControlRotation = false;
 
+	InteractionComp = CreateDefaultSubobject<UInteractionComponent>(TEXT("InteractionComp"));
+
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
@@ -65,6 +67,14 @@ void ADZ_CPPCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ADZ_CPPCharacter::Look);
+
+		// Interakcja
+		if (InteractAction)
+			EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ADZ_CPPCharacter::OnInteract);
+
+		// Atak
+		if (AttackAction)
+			EnhancedInputComponent->BindAction(AttackAction, ETriggerEvent::Started, this, &ADZ_CPPCharacter::OnAttack);
 	}
 	else
 	{
@@ -130,4 +140,41 @@ void ADZ_CPPCharacter::DoJumpEnd()
 {
 	// signal the character to stop jumping
 	StopJumping();
+}
+
+void ADZ_CPPCharacter::OnInteract()
+{
+	if (InteractionComp)
+	{
+		InteractionComp->AttemptInteract();
+	}
+}
+
+void ADZ_CPPCharacter::OnAttack()
+{
+	if (CurrentWeapon)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Atakujê broni¹!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Log, TEXT("Brak broni"));
+	}
+}
+
+void ADZ_CPPCharacter::Equip(AAItem* WeaponItem)
+{
+	if (!WeaponItem) return;
+
+	CurrentWeapon = WeaponItem;
+
+	// Wylaczenie fizyki broni, zeby nie spadala
+	WeaponItem->SetActorEnableCollision(false);
+
+	FName SocketName = TEXT("WeaponSocket");
+
+	FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
+	WeaponItem->AttachToComponent(GetMesh(), AttachRules, SocketName);
+
+	UE_LOG(LogTemp, Log, TEXT("Broñ wyposa¿ona!"));
 }
