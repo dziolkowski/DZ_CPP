@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "Weapon.h"
 #include "DZ_CPP.h"
 
 ADZ_CPPCharacter::ADZ_CPPCharacter()
@@ -162,19 +163,29 @@ void ADZ_CPPCharacter::OnAttack()
 	}
 }
 
-void ADZ_CPPCharacter::Equip(AAItem* WeaponItem)
+// Nowa funkcja do przypisania broni
+void ADZ_CPPCharacter::SetWeapon(AWeapon* NewWeapon)
 {
-	if (!WeaponItem) return;
+	if (NewWeapon)
+	{
+		CurrentWeapon = NewWeapon;
+	}
+}
 
-	CurrentWeapon = WeaponItem;
+// Funkcja wlaczajaca kolizje 
+void ADZ_CPPCharacter::StartWeaponAttack()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->EnableCollision();
+	}
+}
 
-	// Wylaczenie fizyki broni, zeby nie spadala
-	WeaponItem->SetActorEnableCollision(false);
-
-	FName SocketName = TEXT("WeaponSocket");
-
-	FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
-	WeaponItem->AttachToComponent(GetMesh(), AttachRules, SocketName);
-
-	UE_LOG(LogTemp, Log, TEXT("Broñ wyposa¿ona!"));
+// Funkcja wylaczajaca kolizje 
+void ADZ_CPPCharacter::StopWeaponAttack()
+{
+	if (CurrentWeapon)
+	{
+		CurrentWeapon->DisableCollision();
+	}
 }

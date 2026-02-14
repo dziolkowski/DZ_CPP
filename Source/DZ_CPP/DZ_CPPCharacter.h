@@ -13,6 +13,7 @@ class USpringArmComponent;
 class UCameraComponent;
 class UInputAction;
 struct FInputActionValue;
+class AWeapon;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -68,7 +69,6 @@ public:
 	/** Constructor */
 	ADZ_CPPCharacter();	
 
-	void Equip(AAItem* WeaponItem);
 
 protected:
 
@@ -81,7 +81,7 @@ protected:
 
 	// Zmienna przechowuj¹ca obecn¹ broñ
 	UPROPERTY(VisibleAnywhere, Category = "Combat")
-	AAItem* CurrentWeapon;
+	AWeapon* CurrentWeapon;
 
 protected:
 
@@ -108,6 +108,16 @@ public:
 	/** Handles jump pressed inputs from either controls or UI interfaces */
 	UFUNCTION(BlueprintCallable, Category="Input")
 	virtual void DoJumpEnd();
+
+	// Funkcja do ustawiania broni 
+	void SetWeapon(AWeapon* NewWeapon);
+
+	// Funkcje wywolywane przez AnimNotify w Animation Blueprint
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void StartWeaponAttack();
+
+	UFUNCTION(BlueprintCallable, Category = "Combat")
+	void StopWeaponAttack();
 
 public:
 
